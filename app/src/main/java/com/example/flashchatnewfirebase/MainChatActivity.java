@@ -73,6 +73,12 @@ public class MainChatActivity extends AppCompatActivity {
     private void sendMessage() {
         Log.d("FlashChat","I sent something");
         // TODO: Grab the text the user typed in and push the message to Firebase
+        String input = mInputText.getText().toString();
+        if(!input.equals("")){
+            InstantMessage instantMessage = new InstantMessage(input,mDisplayName);
+            mDatabaseReference.child("messages").push().setValue(instantMessage);
+            mInputText.setText("");
+        }
 
     }
 
