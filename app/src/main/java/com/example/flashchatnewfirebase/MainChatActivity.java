@@ -27,6 +27,7 @@ public class MainChatActivity extends AppCompatActivity {
     private EditText mInputText;
     private ImageButton mSendButton;
     private DatabaseReference mDatabaseReference;
+    private ChatListAdapter mChatListAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -86,11 +87,18 @@ public class MainChatActivity extends AppCompatActivity {
 
 
     @Override
+    protected void onStart() {
+        super.onStart();
+        mChatListAdapter = new ChatListAdapter(this, mDatabaseReference, mDisplayName);
+        mChatListView.setAdapter(mChatListAdapter);
+    }
+
+    @Override
     public void onStop() {
         super.onStop();
 
         // TODO: Remove the Firebase event listener on the adapter.
-
+        mChatListAdapter.cleanUp();
     }
 
 }
