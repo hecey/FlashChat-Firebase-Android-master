@@ -73,13 +73,13 @@ public class LoginActivity extends AppCompatActivity {
 
         Log.d("Flashchat", "attemptLogin");
         String email = mEmailView.getText().toString();
-        String passwrod = mPasswordView.getText().toString();
+        String password = mPasswordView.getText().toString();
 
-        if (email.equals("") || passwrod.equals("")) return;
+        if (email.equals("") || password.equals("")) return;
         Toast.makeText(this, "Login in progress", Toast.LENGTH_SHORT).show();
         // TODO: Use FirebaseAuth to sign in with email & password
 
-        mAuth.signInWithEmailAndPassword(email, passwrod).addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+        mAuth.signInWithEmailAndPassword(email, password).addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
             @Override
             public void onComplete(@NonNull Task<AuthResult> task) {
                 Log.d("Flashchat", "signInWithEmailAndPassword onComplete" + task.isSuccessful());

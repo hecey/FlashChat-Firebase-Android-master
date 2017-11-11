@@ -35,7 +35,7 @@ public class ChatListAdapter extends BaseAdapter {
         @Override
         public void onChildAdded(DataSnapshot dataSnapshot, String s) {
             mSnapshotArrayList.add(dataSnapshot);
-            notifyDataSetChanged();
+           notifyDataSetChanged();
         }
 
         @Override
@@ -59,14 +59,18 @@ public class ChatListAdapter extends BaseAdapter {
         }
     };
 
+
     public ChatListAdapter(Activity mActivity, DatabaseReference mDatabaseReference, String mDisplayName) {
         this.mActivity = mActivity;
-        this.mDatabaseReference = mDatabaseReference;
+        this.mDatabaseReference = mDatabaseReference.child("messages");
         this.mDisplayName = mDisplayName;
-        this.mSnapshotArrayList = new ArrayList<>();
 
         //Attacht listener in adapter to Database Reference
-        mDatabaseReference.addChildEventListener(mChildEventListener);
+        this.mDatabaseReference.addChildEventListener(mChildEventListener);
+
+        this.mSnapshotArrayList = new ArrayList<>();
+
+
 
 
     }
@@ -76,6 +80,12 @@ public class ChatListAdapter extends BaseAdapter {
         TextView body;
         LinearLayout.LayoutParams params;
     }
+
+
+
+
+
+
 
     @Override
     public int getCount() {
@@ -117,13 +127,13 @@ public class ChatListAdapter extends BaseAdapter {
 
         //If author is equals to the mDisplayName
         boolean isMe = message.getAuthor().equals(mDisplayName);
-        setChatRowAppearance(isMe, holder);
+       setChatRowAppearance(isMe, holder);
 
         String author = message.getAuthor();
         holder.authorName.setText(author);
 
-        String messge = message.getMessage();
-        holder.body.setText(messge);
+        String msg = message.getMessage();
+        holder.body.setText(msg);
 
         return view;
     }
