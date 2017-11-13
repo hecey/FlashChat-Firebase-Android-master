@@ -8,6 +8,7 @@ import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -44,6 +45,7 @@ public class MainChatActivity extends AppCompatActivity {
         mSendButton = (ImageButton) findViewById(R.id.sendButton);
         mChatListView = (ListView) findViewById(R.id.chat_list_view);
 
+
         // TODO: Send the message when the "enter" button is pressed
         mInputText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
@@ -61,6 +63,7 @@ public class MainChatActivity extends AppCompatActivity {
             }
         });
     }
+
 
     // TODO: Retrieve the display name from the Shared Preferences
     private void setupDisplayName(){
@@ -100,5 +103,6 @@ public class MainChatActivity extends AppCompatActivity {
         // TODO: Remove the Firebase event listener on the adapter.
         mChatListAdapter.cleanUp();
     }
+
 
 }

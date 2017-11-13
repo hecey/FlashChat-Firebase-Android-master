@@ -3,6 +3,7 @@ package com.example.flashchatnewfirebase;
 import android.app.Activity;
 import android.content.Context;
 import android.graphics.Color;
+import android.graphics.drawable.InsetDrawable;
 import android.support.v7.widget.RecyclerView;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -11,6 +12,7 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
@@ -29,12 +31,15 @@ public class ChatListAdapter extends BaseAdapter {
     private Activity mActivity;
     private DatabaseReference mDatabaseReference;
     private String mDisplayName;
-    private ArrayList<DataSnapshot> mSnapshotArrayList;
+    private ArrayList<InstantMessage> mSnapshotArrayList;
 
     private ChildEventListener mChildEventListener = new ChildEventListener() {
         @Override
         public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-            mSnapshotArrayList.add(dataSnapshot);
+            InstantMessage holder = dataSnapshot.getValue(InstantMessage.class);
+            holder.setKey(dataSnapshot.getKey());
+            mSnapshotArrayList.add(holder);
+
            notifyDataSetChanged();
         }
 
@@ -45,7 +50,14 @@ public class ChatListAdapter extends BaseAdapter {
 
         @Override
         public void onChildRemoved(DataSnapshot dataSnapshot) {
-
+                String key = dataSnapshot.getKey();
+                for(InstantMessage im : mSnapshotArrayList){
+                    if(key.equals(im.getKey())){
+                        mSnapshotArrayList.remove(im);
+                        notifyDataSetChanged();
+                        break;
+                    }
+                }
         }
 
         @Override
@@ -72,13 +84,15 @@ public class ChatListAdapter extends BaseAdapter {
 
 
 
-
     }
 
     public class ViewHolder{
         TextView authorName;
         TextView body;
         LinearLayout.LayoutParams params;
+
+
+
     }
 
 
@@ -95,8 +109,8 @@ public class ChatListAdapter extends BaseAdapter {
     @Override
     public InstantMessage getItem(int position) {
         //Make sure adapter provide the correct Message to Listview - DataSnapshot Firebase
-        DataSnapshot mDataSnapshot = mSnapshotArrayList.get(position);
-        return mDataSnapshot.getValue(InstantMessage.class);
+        InstantMessage im = mSnapshotArrayList.get(position);
+        return im;
     }
 
     @Override
@@ -105,7 +119,8 @@ public class ChatListAdapter extends BaseAdapter {
     }
 
     @Override
-    public View getView(int position, View view, ViewGroup viewGroup) {
+    public View getView(final int position, View view, ViewGroup viewGroup) {
+
         if(view == null){
             // Create View from Layout XML File
             LayoutInflater inflater = (LayoutInflater) mActivity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -117,11 +132,15 @@ public class ChatListAdapter extends BaseAdapter {
             holder.authorName = (TextView) view.findViewById(R.id.author);
             holder.body = (TextView) view.findViewById(R.id.message);
             holder.params = (LinearLayout.LayoutParams) holder.authorName.getLayoutParams();
+
+
             //Storing our ViewGHolder for a short period of time for reuse it later
             view.setTag(holder);
         }
 
         // Make sure we are showing the correct Author and message in the ROW if VIEW is recycled
+
+
         final InstantMessage message= getItem(position);
         final ViewHolder holder = (ViewHolder) view.getTag();
 
@@ -133,7 +152,18 @@ public class ChatListAdapter extends BaseAdapter {
         holder.authorName.setText(author);
 
         String msg = message.getMessage();
+        String key = message.getKey();
         holder.body.setText(msg);
+
+        holder.authorName.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                //Toast.makeText(mActivity, holder.authorName.getText(), Toast.LENGTH_SHORT).show();
+                deleteItem(getItem(position));
+
+            }
+        });
 
         return view;
     }
@@ -153,6 +183,17 @@ public class ChatListAdapter extends BaseAdapter {
         holder.authorName.setLayoutParams(holder.params);
         holder.body.setLayoutParams(holder.params);
 
+    }
+
+    public void deleteItem (InstantMessage im) {
+        //mSnapshotArrayList.remove(position);
+
+
+        mDatabaseReference.child(im.getKey()).removeValue();
+        Toast.makeText(mActivity, im.getKey(), Toast.LENGTH_SHORT).show();
+
+        // remove(int) does not exist for arrays, you would have to write that method yourself or use a List instead of an array
+        //notifyDataSetChanged();
     }
 
     public void cleanUp(){
