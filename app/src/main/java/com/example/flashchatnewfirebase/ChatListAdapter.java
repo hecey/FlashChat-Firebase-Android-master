@@ -153,6 +153,7 @@ public class ChatListAdapter extends BaseAdapter {
 
         String msg = message.getMessage();
         String key = message.getKey();
+        holder.body.setText(key);
         holder.body.setText(msg);
 
         holder.authorName.setOnClickListener(new View.OnClickListener() {
