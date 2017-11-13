@@ -70,20 +70,20 @@ public class MainChatActivity extends AppCompatActivity {
 
 
     // TODO: Retrieve the display name from the Shared Preferences
-    private void setupDisplayName(){
-        SharedPreferences preferences = getSharedPreferences(RegisterActivity.CHAT_PREFS,MODE_PRIVATE);
-        mDisplayName= preferences.getString(RegisterActivity.DISPLAY_NAME_KEY,null);
+    private void setupDisplayName() {
+        SharedPreferences preferences = getSharedPreferences(RegisterActivity.CHAT_PREFS, MODE_PRIVATE);
+        mDisplayName = preferences.getString(RegisterActivity.DISPLAY_NAME_KEY, null);
 
-        if(mDisplayName == null) mDisplayName = "Anonymous";
+        if (mDisplayName == null) mDisplayName = "Anonymous";
 
     }
 
     private void sendMessage() {
-        Log.d("Flashchat","I sent something");
+        Log.d("Flashchat", "I sent something");
         // TODO: Grab the text the user typed in and push the message to Firebase
         String input = mInputText.getText().toString();
-        if(!input.equals("")){
-            InstantMessage instantMessage = new InstantMessage(input,mDisplayName);
+        if (!input.equals("")) {
+            InstantMessage instantMessage = new InstantMessage(input, mDisplayName);
             mDatabaseReference.child("messages").push().setValue(instantMessage);
             mInputText.setText("");
         }
@@ -111,13 +111,16 @@ public class MainChatActivity extends AppCompatActivity {
     @Override
     public boolean onContextItemSelected(MenuItem item) {
         AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
-        switch (item.getItemId()){
+        switch (item.getItemId()) {
             case R.id.delete:
                 //Toast.makeText(this, mChatListAdapter.getItem(info.position).getKey(), Toast.LENGTH_SHORT).show();
                 mChatListAdapter.deleteItem(mChatListAdapter.getItem(info.position));
+                return true;
+            default:
+                return super.onContextItemSelected(item);
 
         }
-        return super.onContextItemSelected(item);
+        //return super.onContextItemSelected(item);
     }
 
     @Override
