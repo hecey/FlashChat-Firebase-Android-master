@@ -45,7 +45,16 @@ public class ChatListAdapter extends BaseAdapter {
 
         @Override
         public void onChildChanged(DataSnapshot dataSnapshot, String s) {
-
+            String key = dataSnapshot.getKey();
+            InstantMessage newIM = dataSnapshot.getValue(InstantMessage.class);
+            for(InstantMessage im : mSnapshotArrayList){
+                if(key.equals(im.getKey())){
+                    im.setValues(im);
+                    notifyDataSetChanged();
+                    break;
+                }
+            }
+            notifyDataSetChanged();
         }
 
         @Override
@@ -192,6 +201,18 @@ public class ChatListAdapter extends BaseAdapter {
 
         mDatabaseReference.child(im.getKey()).removeValue();
         Toast.makeText(mActivity, im.getKey(), Toast.LENGTH_SHORT).show();
+
+        // remove(int) does not exist for arrays, you would have to write that method yourself or use a List instead of an array
+        //notifyDataSetChanged();
+    }
+
+    public void updateItem (InstantMessage im, String newAuthor, String newMessage) {
+        //mSnapshotArrayList.remove(position);
+        im.setAuthor(newAuthor);
+        im.setMessage(newMessage);
+
+        mDatabaseReference.child(im.getKey()).setValue(im);
+        //Toast.makeText(mActivity, im.getKey(), Toast.LENGTH_SHORT).show();
 
         // remove(int) does not exist for arrays, you would have to write that method yourself or use a List instead of an array
         //notifyDataSetChanged();

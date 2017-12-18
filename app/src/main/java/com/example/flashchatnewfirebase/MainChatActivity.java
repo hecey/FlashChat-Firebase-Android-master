@@ -1,12 +1,20 @@
 package com.example.flashchatnewfirebase;
 
+import android.app.Dialog;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.database.DataSetObserver;
 import android.os.Bundle;
+import android.support.v4.app.DialogFragment;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.ContextMenu;
 import android.view.KeyEvent;
+import android.view.LayoutInflater;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -32,7 +40,7 @@ public class MainChatActivity extends AppCompatActivity {
     private EditText mInputText;
     private ImageButton mSendButton;
     private DatabaseReference mDatabaseReference;
-    private ChatListAdapter mChatListAdapter;
+    private static ChatListAdapter mChatListAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -116,11 +124,67 @@ public class MainChatActivity extends AppCompatActivity {
                 //Toast.makeText(this, mChatListAdapter.getItem(info.position).getKey(), Toast.LENGTH_SHORT).show();
                 mChatListAdapter.deleteItem(mChatListAdapter.getItem(info.position));
                 return true;
+            case R.id.update:
+                //Toast.makeText(this, mChatListAdapter.getItem(info.position).getKey(), Toast.LENGTH_SHORT).show();
+                showEditDialog(mChatListAdapter.getItem(info.position));
+                // mChatListAdapter.deleteItem(mChatListAdapter.getItem(info.position));
+                return true;
             default:
                 return super.onContextItemSelected(item);
 
         }
         //return super.onContextItemSelected(item);
+    }
+
+    private void showEditDialog(final InstantMessage item) {
+
+                AlertDialog.Builder builder = new AlertDialog.Builder(MainChatActivity.this);
+                builder.setTitle(getString(R.string.dialog_edit_title));
+                LayoutInflater inflater = (LayoutInflater) this.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+                View view = inflater.inflate(R.layout.edit_item, null, false);
+                builder.setView(view);
+
+
+                final EditText authorEditText = (EditText) view.findViewById(R.id.author_text);
+                final EditText messageEditText = (EditText) view.findViewById(R.id.message_text);
+                if (item != null) {
+                    // pre-populate
+                    authorEditText.setText(item.getAuthor());
+                    messageEditText.setText(item.getMessage());
+
+                    TextWatcher textWatcher = new TextWatcher() {
+                        @Override
+                        public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+                            // empty
+                        }
+
+                        @Override
+                        public void onTextChanged(CharSequence s, int start, int before, int count) {
+                            // empty
+                        }
+
+                        @Override
+                        public void afterTextChanged(Editable s) {
+                            String author = authorEditText.getText().toString();
+                            String message = messageEditText.getText().toString();
+                            mChatListAdapter.updateItem(item, author, message);
+                        }
+                    };
+
+                    authorEditText.addTextChangedListener(textWatcher);
+                    messageEditText.addTextChangedListener(textWatcher);
+                }
+
+//                builder.setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+//                    @Override
+//                    public void onClick(DialogInterface dialog, int which) {
+//
+//                    }
+//                });
+                builder.setNegativeButton(R.string.close, null);
+
+        builder.show();
+
     }
 
     @Override

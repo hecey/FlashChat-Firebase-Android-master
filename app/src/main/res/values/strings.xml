@@ -18,4 +18,6 @@
         completions."
     </string>
     <string name="sample_message">Hello!</string>
+    <string name="dialog_edit_title">Edit Message</string>
+    <string name="close">Close</string>
 </resources>

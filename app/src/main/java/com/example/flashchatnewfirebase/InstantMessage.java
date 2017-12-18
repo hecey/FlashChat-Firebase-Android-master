@@ -30,7 +30,20 @@ public class InstantMessage  {
         return key;
     }
 
+    public void setMessage(String message) {
+        this.message = message;
+    }
+
+    public void setAuthor(String author) {
+        this.author = author;
+    }
+
     public void setKey(String key) {
         this.key = key;
+    }
+
+    public void setValues(InstantMessage newMessage) {
+        this.message = newMessage.getMessage();
+        this.author = newMessage.getAuthor();
     }
 }
